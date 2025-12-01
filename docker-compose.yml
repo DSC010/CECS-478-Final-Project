@@ -1,8 +1,12 @@
 version: "3.9"
 services:
-  telogs-app:
-    image: python:3.11-slim
+  telogs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - TELOGS_SECRET=${TELOGS_SECRET:-dev-secret}
     working_dir: /app
     volumes:
       - ./:/app
-    command: ["bash", "-lc", "echo 'Telogs skeleton container ready.'"]
+    command: ["bash", "-lc", "make demo && tail -f /dev/null"]
