@@ -1,15 +1,16 @@
-# Tamper‑Evident Logs (Option 6) – Milestone 1
+# Tamper-Evident Logs – Alpha/Beta Integrated Release
 
-This repository is the Milestone 1 skeleton for a Python‑based tamper‑evident logging system.
-Implementation will be added in later milestones.
+Python-based HMAC-chained log format for CECS 478.
 
-## Quick Start
+## Vertical slice
 
-Run:
+1. `scripts/write_log.py` writes events to `artifacts/release/app.log`.
+2. `scripts/verify_log.py` verifies the chain and writes `verify_summary.json`.
+3. `scripts/summarize_log.py` exports JSON + CSV metrics.
+
+## Quick start
 
 ```bash
 make bootstrap
-```
-
-This creates a virtual environment and installs minimal dependencies so the project
-is ready for development in future milestones.
+make test
+make demo
