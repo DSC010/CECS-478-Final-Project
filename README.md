@@ -1,16 +1,30 @@
-# Tamper-Evident Logs – Alpha/Beta Integrated Release
+# Tamper-Evident Logging & Verification System
 
-Python-based HMAC-chained log format for CECS 478.
+A lightweight, Python-based logging system with cryptographic integrity verification.  
+Each log entry depends on the previous one via **HMAC hash chaining**, allowing the system to **detect any tampering** (editing, deletion, insertion, or reordering).
 
-## Vertical slice
+This is the **Alpha–Beta Integrated Release** for CECS 478 — fully runnable end-to-end inside Docker with automated testing and evidence artifacts.
 
-1. `scripts/write_log.py` writes events to `artifacts/release/app.log`.
-2. `scripts/verify_log.py` verifies the chain and writes `verify_summary.json`.
-3. `scripts/summarize_log.py` exports JSON + CSV metrics.
+---
 
-## Quick start
+## Vertical Slice Overview
+**request → log → verify → summarize**
+
+1. **Application** appends JSON log entries  
+2. Each entry includes the **`prev_hmac`** from the previous line  
+3. A verifier script **replays the log** and detects the first break in the chain  
+4. A summarizer exports **JSON + CSV metrics** for evaluation
+
+No plaintext secrets ever written to disk.  
+Any modification of historical entries becomes immediately detectable.
+
+---
+
+## Quick Start Instructions
+
+Clone the repo and run:
 
 ```bash
-make bootstrap
-make test
-make demo
+make bootstrap      # once – install Python deps in venv
+make up             # build + start Docker container
+make demo           # exercise the full vertical slice
