@@ -1,0 +1,3 @@
+{"extra":{},"hmac":"056ece746cdf2c0e59f6c18e12b4f6e155bbb9f0b714a90fc5fdf2e8858645cc","level":"INFO","msg":"demo start","prev_hmac":"0000000000000000000000000000000000000000000000000000000000000000","ts":1765135963.7923207}
+{"extra":{"user":"alice"},"hmac":"4a79f7fe7f62c3fcd969afd608b0e8d03cb6db678bbb9960a82791ad1c2f456c","level":"INFO","msg":"login","prev_hmac":"056ece746cdf2c0e59f6c18e12b4f6e155bbb9f0b714a90fc5fdf2e8858645cc","ts":1765135963.8584251}
+{"extra":{},"hmac":"58132230dee062b6006dffa5f0e60408f2d1d42e5d8be914ed72b7bfa55d9f5a","level":"INFO","msg":"done","prev_hmac":"4a79f7fe7f62c3fcd969afd608b0e8d03cb6db678bbb9960a82791ad1c2f456c","ts":1765135963.9232788}
