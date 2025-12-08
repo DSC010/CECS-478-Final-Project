@@ -79,7 +79,7 @@ echo
 echo "=== Test 5: Modify extra field (tamper_extra.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_extra.log
 # Change user=42 to user=999 in the JSON extra field
-sed -i '0,/"user":42/s//"user":999/' artifacts/tamper/tamper_extra.log || true
+sed -i '0,/"user":"42"/s//"user":"999"/' artifacts/tamper/tamper_extra.log || true
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_extra.log || true
 echo
 
