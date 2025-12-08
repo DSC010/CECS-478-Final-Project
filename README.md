@@ -8,7 +8,7 @@ This is the **Alpha–Beta Integrated Release** for CECS 478 — fully runnable 
 ---
 
 ## Vertical Slice Overview
-**request → log → verify → summarize**
+**request -> log -> verify -> summarize**
 
 1. **Application** appends JSON log entries  
 2. Each entry includes the **`prev_hmac`** from the previous line  
