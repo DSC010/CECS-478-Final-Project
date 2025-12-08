@@ -38,7 +38,7 @@ echo
 ########################################
 echo "=== Test 1: Modify message text (tamper_msg.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_msg.log
-# Change the 'login' message to 'hacked' (no spaces in JSON)
+# Change the 'login' message to 'hacked'
 sed -i '0,/"msg":"login"/s//"msg":"hacked"/' artifacts/tamper/tamper_msg.log || true
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_msg.log || true
 echo
@@ -48,7 +48,7 @@ echo
 ########################################
 echo "=== Test 2: Change level (tamper_level.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_level.log
-# Change only the first INFO to ERROR (no spaces in JSON)
+# Change first INFO to ERROR
 sed -i '0,/"level":"INFO"/s//"level":"ERROR"/' artifacts/tamper/tamper_level.log || true
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_level.log || true
 echo
@@ -58,7 +58,7 @@ echo
 ########################################
 echo "=== Test 3: Delete line 2 (tamper_delete.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_delete.log
-# Delete the second line from the log
+# Delete the second JSONL entry
 sed -i '2d' artifacts/tamper/tamper_delete.log || true
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_delete.log || true
 echo
@@ -68,18 +68,36 @@ echo
 ########################################
 echo "=== Test 4: Insert extra entry at end (tamper_insert.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_insert.log
-# Append a duplicate of line 2 (but the chain expects 3 entries, not 4)
+# Append a duplicate of line 2 — chain no longer valid
 sed -n '2p' artifacts/tamper/clean.log >> artifacts/tamper/tamper_insert.log
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_insert.log || true
 echo
 
 ########################################
-# Test 5 — Modify extra metadata
+# Test 5 — Modify metadata field via Python
 ########################################
 echo "=== Test 5: Modify extra field (tamper_extra.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_extra.log
-# Change user=42 to user=999 in the JSON extra field
-sed -i '0,/"user":"42"/s//"user":"999"/' artifacts/tamper/tamper_extra.log || true
+
+python3 - << 'EOF'
+import json
+from pathlib import Path
+
+path = Path("artifacts/tamper/tamper_extra.log")
+lines = path.read_text().splitlines()
+
+# Tamper with the second entry (index 1)
+obj = json.loads(lines[1])
+extra = obj.get("extra", {})
+extra["tampered"] = True   # add or change a metadata field
+obj["extra"] = extra
+
+# Re-encode with canonical-style JSON (sorted keys, tight separators)
+lines[1] = json.dumps(obj, sort_keys=True, separators=(",", ":"))
+
+path.write_text("\n".join(lines) + "\n")
+EOF
+
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_extra.log || true
 echo
 
