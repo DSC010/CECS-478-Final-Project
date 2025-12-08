@@ -38,8 +38,8 @@ echo
 ########################################
 echo "=== Test 1: Modify message text (tamper_msg.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_msg.log
-# Change the 'login' message to 'hacked'
-sed -i '0,/"msg": "login"/s//"msg": "hacked"/' artifacts/tamper/tamper_msg.log || true
+# Change the 'login' message to 'hacked' (no spaces in JSON)
+sed -i '0,/"msg":"login"/s//"msg":"hacked"/' artifacts/tamper/tamper_msg.log || true
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_msg.log || true
 echo
 
@@ -48,8 +48,8 @@ echo
 ########################################
 echo "=== Test 2: Change level (tamper_level.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_level.log
-# Change only the first INFO to ERROR
-sed -i '0,/"level": "INFO"/s//"level": "ERROR"/' artifacts/tamper/tamper_level.log || true
+# Change only the first INFO to ERROR (no spaces in JSON)
+sed -i '0,/"level":"INFO"/s//"level":"ERROR"/' artifacts/tamper/tamper_level.log || true
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_level.log || true
 echo
 
@@ -64,22 +64,23 @@ python3 scripts/verify_log.py --log artifacts/tamper/tamper_delete.log || true
 echo
 
 ########################################
-# Test 4 — Insert a fake entry
+# Test 4 — Insert a fake/duplicate entry
 ########################################
-echo "=== Test 4: Insert fake entry at end (tamper_insert.log) ==="
+echo "=== Test 4: Insert extra entry at end (tamper_insert.log) ==="
 cp artifacts/tamper/clean.log artifacts/tamper/tamper_insert.log
-# Append a JSON object that does not participate correctly in the chain
+# Append a duplicate of line 2 (but the chain expects 3 entries, not 4)
 sed -n '2p' artifacts/tamper/clean.log >> artifacts/tamper/tamper_insert.log
 python3 scripts/verify_log.py --log artifacts/tamper/tamper_insert.log || true
 echo
 
 ########################################
-# Test 5 — Reorder entries
+# Test 5 — Modify extra metadata
 ########################################
-echo "=== Test 5: Reorder lines 2 and 3 (tamper_reorder.log) ==="
-cp artifacts/tamper/clean.log artifacts/tamper/tamper_reorder.log
-awk 'NR==1{print $0} NR==3{print $0} NR==2{print $0}' artifacts/tamper/clean.log > artifacts/tamper/tamper_reorder.log
-python3 scripts/verify_log.py --log artifacts/tamper/tamper_reorder.log || true
+echo "=== Test 5: Modify extra field (tamper_extra.log) ==="
+cp artifacts/tamper/clean.log artifacts/tamper/tamper_extra.log
+# Change user=42 to user=999 in the JSON extra field
+sed -i '0,/"user":42/s//"user":999/' artifacts/tamper/tamper_extra.log || true
+python3 scripts/verify_log.py --log artifacts/tamper/tamper_extra.log || true
 echo
 
 ########################################
