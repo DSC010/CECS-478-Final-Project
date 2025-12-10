@@ -1,30 +1,29 @@
 # Tamper-Evident Logging & Verification System
 
 A lightweight, Python-based logging system with cryptographic integrity verification.  
-Each log entry depends on the previous one via **HMAC hash chaining**, allowing the system to **detect any tampering** (editing, deletion, insertion, or reordering).
+Each log entry depends on the previous one via **HMAC hash chaining**, allowing the system to **detect any tampering** (editing, deletion, insertion, or corruption).
 
-This is the **Alpha–Beta Integrated Release** for CECS 478 — fully runnable end-to-end inside Docker with automated testing and evidence artifacts.
+This is the **Alpha–Beta Integrated Release** for CECS 478 — runnable end-to-end with a single `make` command and accompanied by frozen evidence artifacts and a final report.
 
 ---
 
 ## Vertical Slice Overview
+
 **request -> log -> verify -> summarize**
 
-1. **Application** appends JSON log entries  
-2. Each entry includes the **`prev_hmac`** from the previous line  
-3. A verifier script **replays the log** and detects the first break in the chain  
-4. A summarizer exports **JSON + CSV metrics** for evaluation
+1. An application appends JSON log entries using `write_log.py`.  
+2. Each entry includes the previous entry’s HMAC (`prev_hmac`), forming a hash chain.  
+3. `verify_log.py` replays the log and detects the **first break in the chain**.  
+4. `summarize_log.py` exports **JSON + CSV metrics** for evaluation.
 
-No plaintext secrets ever written to disk.  
+No plaintext secrets are written to disk.  
 Any modification of historical entries becomes immediately detectable.
 
 ---
 
-## Quick Start Instructions
+## Quick Start (Grading / Reproducibility Command)
 
-Clone the repo and run:
+From a clean clone of the repo:
 
 ```bash
-make bootstrap      # once – install Python deps in venv
-make up             # build + start Docker container
-make demo           # exercise the full vertical slice
+make clean && make up && make demo
